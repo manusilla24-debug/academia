@@ -1,0 +1,11 @@
+1
+00:00:00,000 --> 00:01:10,000
+DEMO. Material editorial ficticio, no pertenece al canal. En BTN contra BB en un bote single-raised, el plan de c-bet depende de los rangos, la textura y el rival. En boards bajos conectados la BB puede conservar muchas parejas, dobles y proyectos. Tener ventaja preflop no justifica apostar automáticamente toda la parte débil del rango.
+
+2
+00:01:10,000 --> 00:02:30,000
+DEMO. Para planificar un segundo barrel, identifica qué turns favorecen tu rango, qué manos peores continúan y qué manos mejores pueden foldear. Con equity, blockers útiles y fold equity razonable puede haber un farol, pero sin conocer tamaños y rangos no hay una frecuencia exacta. Frente a un rival que paga demasiado, reduce faroles sin equity y prioriza valor.
+
+3
+00:02:30,000 --> 00:04:00,000
+DEMO. En river, un bluffcatcher gana principalmente a faroles. Debes estimar la composición del rango que apuesta, el tamaño y el perfil del rival. Bloquear valor puede ayudar, pero bloquear faroles puede perjudicar. Un check-raise grande de un rival pasivo suele merecer cautela como hipótesis explotativa; una sola mano no demuestra un leak ni un patrón estadístico.

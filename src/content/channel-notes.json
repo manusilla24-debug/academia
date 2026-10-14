@@ -1,0 +1,154 @@
+[
+  {
+    "slug": "seleccion-preflop-nl2",
+    "videoId": "emkzrN29v-8",
+    "title": "NL2: adaptar decisiones preflop al rival",
+    "module": "Del canal · Preflop",
+    "from": 526,
+    "to": 642,
+    "summary": "En la sesión se comentan decisiones preflop que cambian por los jugadores presentes y por la fuerza percibida de sus rangos. El valor de una mano marginal no se deduce solo de su apariencia: importa contra quién acabaría jugando y qué manos podrían dominarla. Para estudiar el fragmento, separa la decisión observada de una regla universal. Reconoce qué lectura usa el profesor y qué información tendrías que reunir para aplicarla a una mano propia.",
+    "limits": "La transcripción es especialmente ruidosa y no reconstruye con seguridad las cartas ni todas las posiciones. No se extrae una tabla de opens o defensa ni porcentajes exactos.",
+    "questions": [
+      {
+        "prompt": "Una mano suited marginal parece defendible, pero el agresor conserva un rango fuerte. ¿Qué comparación es necesaria?",
+        "options": [
+          "Solo si las cartas son del mismo palo.",
+          "Dominación, rango rival y realización de equity bajo las condiciones concretas.",
+          "Que la jugaste una vez y ganaste."
+        ],
+        "accepted": [1],
+        "explanation": "La jugabilidad aislada no elimina la dominación ni las condiciones del rival. Es una pregunta conceptual, no la reconstrucción exacta de la mano del vídeo."
+      }
+    ]
+  },
+  {
+    "slug": "clasificar-faroles",
+    "videoId": "gnRHLRwas0Y",
+    "title": "Clasificar oportunidades de farol sin convertirlas en obligaciones",
+    "module": "Del canal · Bluffing",
+    "from": 195,
+    "to": 525,
+    "summary": "El fragmento organiza oportunidades de farol alrededor de la relación entre rangos y textura, y de la equity de determinados proyectos. También aclara que la forma de jugar cambia con la posición y el perfil rival. La utilidad práctica es crear categorías que después puedas contrastar en manos propias. Las etiquetas enfáticas del programa no prueban rentabilidad universal: una ventaja de rango o un proyecto fuerte no justifican cualquier apuesta, tamaño o secuencia. Los resultados de unos pocos intentos tampoco bastan para evaluar una estrategia.",
+    "limits": "No se atribuyen frecuencias, EV ni equities exactas. Los ejemplos de naipes del ASR son ambiguos; no se reconstruyen como spots completos. Las preguntas son interpretación editorial.",
+    "questions": [
+      {
+        "prompt": "¿Qué conclusión mantiene las condiciones del fragmento al estudiar un combo draw?",
+        "options": [
+          "Hay que apostar siempre y por cualquier tamaño.",
+          "Es una familia interesante para estudiar faroles, pero posición, rival y rangos siguen importando.",
+          "Tener equity elimina la necesidad de fold equity."
+        ],
+        "accepted": [1],
+        "explanation": "El propio diálogo distingue catalogar la oportunidad de concretar cómo jugarla frente a cada rival."
+      },
+      {
+        "prompt": "Tres intentos de un farol no funcionaron. ¿Qué revisión evita conclusiones precipitadas?",
+        "options": [
+          "Revisar equivalencia del spot, selección del rival, tamaños e incertidumbre de la muestra.",
+          "Repetir sin analizar porque una etiqueta lo llama obligatorio.",
+          "Descartar todos los faroles de esa familia para siempre."
+        ],
+        "accepted": [0],
+        "explanation": "La evaluación exige comprobar condiciones y razonamiento; ni la racha ni la etiqueta prueban la rentabilidad."
+      }
+    ]
+  },
+  {
+    "slug": "diagnosticar-barrels",
+    "videoId": "1Y2f_FdnfXM",
+    "title": "Diagnóstico: buscar manos detrás de una señal estadística",
+    "module": "Del canal · Revisión y leaks",
+    "from": 190,
+    "to": 310,
+    "summary": "En esta revisión se parte de estadísticas de un alumno y se propone localizar manos concretas donde el jugador continúa apostando varias calles y pierde. La lectura útil es metodológica: un dato agregado señala una pregunta que después debe contrastarse con decisiones y contexto. No convierte automáticamente una frecuencia aislada en un leak ni los resultados de ese alumno en objetivos válidos para ti. Usa el filtro para encontrar ejemplos y contrasta también excepciones, evitando identificar error con cualquier bote perdido.",
+    "limits": "Los datos citados pertenecen al caso del vídeo, no a tu perfil. No se copian como objetivos estadísticos personales ni se afirma significación estadística. El intervalo importado excluye anuncios posteriores de torneos.",
+    "questions": [
+      {
+        "prompt": "Una estadística sugiere que continúas demasiado en turn. ¿Cuál es el siguiente paso de revisión?",
+        "options": [
+          "Cambiar la frecuencia hasta copiar el número de otro alumno.",
+          "Localizar manos comparables y evaluar objetivo, rangos y runout, incluidas excepciones.",
+          "Concluir que todos los segundos barrels perdidos fueron errores."
+        ],
+        "accepted": [1],
+        "explanation": "La señal estadística guía la búsqueda; las decisiones concretas y su contexto son la evidencia que debe estudiarse."
+      }
+    ]
+  },
+  {
+    "slug": "check-call-con-criterio",
+    "videoId": "XWWkJGyE25g",
+    "title": "Check-call: justificar el precio y reconocer lo que falta",
+    "module": "Del canal · Turn y river",
+    "from": 1918,
+    "to": 2008,
+    "summary": "En el fragmento se discute una línea de check-call y se insiste en que no debe consistir en pagar para ver qué pasa. La explicación relaciona la decisión con el precio y con qué recuperaciones posteriores podrían existir. Como los naipes y parte del spot no quedan claros en el reconocimiento automático, la lección conserva el criterio de evaluación y no reproduce números como si fueran una equity validada. Antes de trasladarlo, reconstruye bote, apuesta, outs limpios y condiciones de cobro.",
+    "limits": "No es posible verificar con esta transcripción las cartas y probabilidades del ejemplo. No se publican porcentajes de equity, una solución exacta ni una recomendación de call para una mano concreta.",
+    "questions": [
+      {
+        "prompt": "El ASR menciona una equity, pero no puedes reconstruir las cartas. ¿Cómo debe usarse el ejemplo?",
+        "options": [
+          "Como cálculo validado para cualquier mano parecida.",
+          "Como criterio conceptual de precio y condiciones, manteniendo el cálculo concreto pendiente de verificación.",
+          "Como prueba de que cualquier proyecto debe pagarse."
+        ],
+        "accepted": [1],
+        "explanation": "La procedencia del fragmento está verificada; el dato numérico concreto no lo está y no debe presentarse como cálculo exacto."
+      }
+    ]
+  },
+  {
+    "slug": "preparacion-y-exposicion",
+    "videoId": "Lq92FT5OIt8",
+    "title": "Preparar NL10: distinguir requisitos de promesas",
+    "module": "Del canal · Preparación NL10",
+    "from": 15,
+    "to": 200,
+    "summary": "El comienzo del programa debate los requisitos para plantear una transición de nivel y pone sobre la mesa la disponibilidad y gestión de recursos. Para el estudio personal, la idea aprovechable es separar preparación técnica, condiciones personales de exposición y expectativas. El título del programa no puede convertirse en una garantía de resultados. Anota qué puedes comprobar con tus manos y qué decisiones personales deben definirse antes de asumir una dificultad o exposición mayor.",
+    "limits": "No se extrae una cifra universal de bankroll ni un plazo para ganar. Las cifras del ASR son ambiguas y contextuales. Esta nota no prescribe dinero a arriesgar ni garantiza batir NL10.",
+    "questions": [
+      {
+        "prompt": "¿Qué diferencia una preparación de nivel útil de interpretar literalmente una promesa de pocos días?",
+        "options": [
+          "Comprobar habilidades, condiciones y límites personales sin tratar el plazo como garantía.",
+          "Suponer que acabar una lista de vídeos demuestra rentabilidad.",
+          "Aumentar exposición para cumplir la fecha anunciada."
+        ],
+        "accepted": [0],
+        "explanation": "Una planificación personal puede evaluarse; una promesa de resultados no sustituye evidencia ni elimina incertidumbre."
+      }
+    ]
+  },
+  {
+    "slug": "3bet-ip-plan",
+    "videoId": "sZqq4umYkTQ",
+    "title": "3-bet pots IP: escoger entre showdown y bluff",
+    "module": "Del canal · Botes 3-beteados IP",
+    "from": 796,
+    "to": 958,
+    "summary": "El diálogo contrasta conservar showdown con convertir una mano en farol y vuelve sobre la necesidad de elegir cartas de continuación. Una parte importante es reevaluar cuando el turn o el river cambian la situación, en vez de apostar a ver qué pasa. La lección no copia una secuencia de barrels como receta: traduce el fragmento a preguntas sobre objetivo, respuesta rival y runouts. Antes de apostar, indica qué manos mejores podrían foldear, qué equity conserva tu mano y qué cartas te harían cambiar de plan.",
+    "limits": "No se reconstruyen el board completo, los rangos ni el SPR. Las expresiones enfáticas del profesor se mantienen como contexto, no como frecuencias universales. No se prescribe all-in ni sizing exacto.",
+    "questions": [
+      {
+        "prompt": "En un bote 3-beteado IP, ¿qué distinción permite estudiar las alternativas del fragmento?",
+        "options": [
+          "Showdown y bluff son siempre la misma función.",
+          "Conservar showdown o seleccionar un bluff con un objetivo y condiciones de continuación distintos.",
+          "Una 3-bet obliga a apostar todas las calles."
+        ],
+        "accepted": [1],
+        "explanation": "El plan depende de la función de la mano y debe actualizarse con runout y respuesta rival."
+      },
+      {
+        "prompt": "Planeas barrelear ciertos turns, pero cae una carta que favorece la continuación rival. ¿Qué conserva la lógica de la revisión?",
+        "options": [
+          "Reformular el plan con esa información.",
+          "Continuar obligado porque apostaste flop.",
+          "Decidir solo por el resultado final."
+        ],
+        "accepted": [0],
+        "explanation": "Planificar y reevaluar son compatibles. Una carta no prevista favorablemente puede justificar cambiar la línea."
+      }
+    ]
+  }
+]
