@@ -25,6 +25,8 @@ Las capturas QA reflejan la aplicación con DEMO etiquetado y fixture de prueba;
 
 ## Ampliación de contenido y diseño
 
+El servidor de desarrollo usa Webpack e ignora la base local y las cachés de compilación para evitar recargas al persistir datos. Se repitieron ambos recorridos E2E con esta configuración y la compilación de producción pasó en una caché independiente. El acceso permite hasta 30 segundos de compilación inicial en la prueba; se mantiene la comprobación de cierre de sesión y respuesta 401.
+
 Portada simplificada basada en primitivas MIT de shadcn/ui, con atribución. Ruta editorial de 18 lecciones, 36 ejercicios y 18 fichas. Catálogo local de 65 vídeos reales, 8 transcripciones legítimas obtenidas mediante la integración de navegador y 6 síntesis con referencias. Hay 8 ejercicios derivados pendientes de revisión. RSS oficial consultado realmente; no se ha supuesto acceso al histórico completo.
 
 Se verificó el login real con la contraseña solicitada y se corrigió el envío de email nulo en modo local. La configuración privada usa hash scrypt con salt y desactiva la entrada DEMO. Las transcripciones, la base SQLite y las credenciales quedan ignoradas por Git. No se afirma que todo el canal esté procesado o que se garanticen resultados de NL10.

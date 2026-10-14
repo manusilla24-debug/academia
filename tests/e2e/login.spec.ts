@@ -9,7 +9,7 @@ test("login local real sin campo email y cierre de sesión", async ({
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Una buena decisión cada vez." }),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 30000 });
   await page
     .getByRole("button", { name: "Cerrar sesión", exact: true })
     .click();
