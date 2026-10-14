@@ -5,6 +5,7 @@ import { join } from "node:path";
 const guard = vi.hoisted(() => ({ allowed: false }));
 vi.mock("../src/lib/auth", () => ({
   authenticated: async () => guard.allowed,
+  usesSupabaseAuth: () => false,
   sameOrigin: (r: Request) => r.headers.get("origin") === new URL(r.url).origin,
 }));
 import { GET, POST } from "../src/app/api/lab/route";

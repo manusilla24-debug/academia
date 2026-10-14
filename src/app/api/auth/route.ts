@@ -7,6 +7,7 @@ import {
   signSession,
   supabase,
   validPassword,
+  usesSupabaseAuth,
 } from "@/lib/auth";
 export const runtime = "nodejs";
 const limits = new Map<string, { attempts: number; until: number }>();
@@ -29,7 +30,7 @@ export async function POST(req: Request) {
       .parse(await req.json());
     const jar = await cookies();
     if (body.logout) {
-      if (process.env.APP_MODE === "supabase") {
+      if (usesSupabaseAuth()) {
         const client = await supabase();
         await client.auth.signOut();
       }
@@ -50,7 +51,7 @@ export async function POST(req: Request) {
         { error: "Demasiados intentos. Espera 15 minutos." },
         { status: 429 },
       );
-    if (process.env.APP_MODE === "supabase") {
+    if (usesSupabaseAuth()) {
       const client = await supabase();
       const { data, error } = await client.auth.signInWithPassword({
         email: body.email ?? "",
@@ -67,7 +68,7 @@ export async function POST(req: Request) {
       if (!(body.demo && demoAllowed()) && !validPassword(body.password ?? ""))
         return NextResponse.json(
           {
-            error: "Contraseña incorrecta o acceso local sin configurar.",
+            error: "Contraseña incorrecta o acceso sin configurar.",
           },
           { status: 401 },
         );

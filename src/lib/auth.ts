@@ -7,6 +7,11 @@ import {
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 const devSecret = randomBytes(32).toString("hex");
+export function usesSupabaseAuth() {
+  return (
+    process.env.APP_MODE === "supabase" && process.env.AUTH_MODE !== "password"
+  );
+}
 export function demoAllowed() {
   return (
     process.env.NODE_ENV !== "production" &&
@@ -93,7 +98,7 @@ export async function supabase() {
   });
 }
 export async function authenticated() {
-  if (process.env.APP_MODE === "supabase") {
+  if (usesSupabaseAuth()) {
     try {
       const client = await supabase();
       const { data, error } = await client.auth.getUser();
@@ -104,7 +109,14 @@ export async function authenticated() {
       return false;
     }
   }
-  if (process.env.NODE_ENV === "production" && process.env.APP_MODE !== "local")
+  if (
+    process.env.NODE_ENV === "production" &&
+    process.env.APP_MODE !== "local" &&
+    !(
+      process.env.APP_MODE === "supabase" &&
+      process.env.AUTH_MODE === "password"
+    )
+  )
     return false;
   return validSession((await cookies()).get("poker_session")?.value ?? "");
 }

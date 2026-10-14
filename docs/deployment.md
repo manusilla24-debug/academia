@@ -48,6 +48,25 @@ Sustituye la URL; no repitas `remote add` si ya existe. Comprueba que no haya se
 
 ## Vercel
 
+### Acceso solo con contraseña
+
+El almacenamiento y la autenticación se configuran por separado. Para una academia privada con una contraseña compartida, configura en Vercel (Production):
+
+```dotenv
+APP_MODE=supabase
+AUTH_MODE=password
+LOCAL_DEMO_LOGIN=false
+LOCAL_PASSWORD_HASH=SALT:DIGEST_SCRYPT
+LOCAL_PASSWORD_MIN_LENGTH=7
+SESSION_SECRET=VALOR_ALEATORIO_DE_AL_MENOS_32_CARACTERES
+DATABASE_URL=URL_POSTGRESQL_CON_TLS
+APP_ORIGIN=https://TU_DOMINIO
+```
+
+Usa el hash y el secreto privados, nunca los publiques en Git ni uses prefijos `NEXT_PUBLIC_`. La contraseña no se incluye en el código. Este modo muestra únicamente el campo de contraseña y usa una cookie HTTPS, HttpOnly y SameSite Strict con duración de ocho horas. No requiere email ni una sesión de Supabase Auth. Los originales de las transcripciones se conservan en la fila PostgreSQL junto con sus cues; este modo no necesita Supabase Storage.
+
+La base PostgreSQL y sus migraciones siguen siendo necesarias. El contenido SQLite del ordenador no se transfiere a Vercel con un push. Cambiar variables requiere un nuevo despliegue. Sin `AUTH_MODE=password`, se mantiene el acceso con email y contraseña de Supabase descrito abajo.
+
 1. Importa el repositorio privado. Framework Next.js, raíz este directorio, instalación `npm ci`, build `npm run build`, Node 24 o 22.
 2. Configura variables Supabase, `APP_MODE=supabase`, y claves de YouTube/IA si quieres esos servicios. SQLite se rechaza en Vercel porque no sería persistente.
 3. Añade `NEXT_TELEMETRY_DISABLED=1` para desactivar telemetría del CLI. No hay telemetría de producto.

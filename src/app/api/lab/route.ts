@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
-import { authenticated, sameOrigin } from "@/lib/auth";
+import { authenticated, sameOrigin, usesSupabaseAuth } from "@/lib/auth";
 import { mutate, readState } from "@/lib/db/store";
 import { now, handSchema, type Video } from "@/lib/domain";
 import { youtubeId, YouTubeMetadataProvider } from "@/lib/youtube";
@@ -233,11 +233,16 @@ export async function POST(req: Request) {
     }
     if (a.op === "transcript") {
       new FileTranscriptProvider().parse(a.text, a.name);
-      const path = await (
-        process.env.APP_MODE === "supabase"
-          ? new SupabaseSourceStorage()
-          : new LocalSourceStorage()
-      ).put(a.text);
+      // Password-only remote access stores the original in PostgreSQL with the
+      // transcript, without requiring a separate Supabase user/Storage session.
+      const path =
+        process.env.APP_MODE === "supabase" && !usesSupabaseAuth()
+          ? undefined
+          : await (
+              process.env.APP_MODE === "supabase"
+                ? new SupabaseSourceStorage()
+                : new LocalSourceStorage()
+            ).put(a.text);
       const id = await mutate((s) => {
         const transcript = addTranscript(s, a.videoId, a.text, a.name);
         transcript.storagePath = path;
