@@ -88,6 +88,7 @@ test("fuente → worker → revisión → lección → práctica → persistenci
   expect(data.exercises.length).toBeGreaterThan(0);
   expect(data.concepts[0].segmentIds.length).toBeGreaterThan(0);
   await page.getByRole("button", { name: "Entrenador", exact: true }).click();
+  await page.getByRole("button", { name: /^Revisar pendientes/ }).click();
   await page
     .getByRole("button", { name: "He revisado este ejercicio" })
     .click();

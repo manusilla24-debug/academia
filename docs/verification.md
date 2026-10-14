@@ -2,6 +2,8 @@
 
 14 de octubre de 2026. Windows, Node 24.15.0, Next.js 16.4.1, lockfile versionado.
 
+Corrección del entrenador: los ejercicios pendientes se revisan en un modo separado y ya no impiden responder los test disponibles. Se verificó el caso con un ejercicio pendiente al principio, una respuesta correcta persistida, salto de pregunta sin arrastrar la selección y retorno a práctica tras revisar. Resultado actualizado: 39 pruebas unitarias/integración y tres recorridos E2E aprobados; TypeScript y ESLint sin errores.
+
 Resultados ejecutados sobre el código final:
 
 | Comando                | Resultado                                                                             |

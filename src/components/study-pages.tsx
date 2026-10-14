@@ -550,15 +550,30 @@ export function SearchPage({ s, notify }: Context) {
 
 export function Trainer(ctx: Context) {
   const { s, act, busy } = ctx;
+  const [mode, setMode] = useState<"practice" | "review">("practice");
   const [index, setIndex] = useState(0);
   const [choice, setChoice] = useState<number>();
   const [feedback, setFeedback] = useState(false);
-  const exercises = s.exercises.filter(
+  const published = s.exercises.filter(
     (e) =>
       !e.demo &&
       s.lessons.some((l) => l.id === e.lessonId && l.status === "published"),
   );
+  const ready = published.filter((exercise) => exercise.kind !== "pendiente");
+  const pending = published.filter((exercise) => exercise.kind === "pendiente");
+  const exercises = mode === "practice" ? ready : pending;
   const e = exercises[index % Math.max(1, exercises.length)];
+  function switchMode(next: "practice" | "review") {
+    setMode(next);
+    setIndex(0);
+    setChoice(undefined);
+    setFeedback(false);
+  }
+  function nextExercise() {
+    setIndex(index + 1);
+    setChoice(undefined);
+    setFeedback(false);
+  }
   async function answer() {
     if (choice === undefined || !e) return;
     const r = await act({ op: "attempt", exerciseId: e.id, choice });
@@ -571,6 +586,24 @@ export function Trainer(ctx: Context) {
         title="Entrenador de decisiones"
         subtitle="Práctica fuera de sesión. Respuestas condicionadas a la fuente y a los supuestos."
       />
+      <div className="button-row" aria-label="Modo del entrenador">
+        <Button
+          variant={mode === "practice" ? "primary" : "secondary"}
+          aria-pressed={mode === "practice"}
+          disabled={busy}
+          onClick={() => switchMode("practice")}
+        >
+          Practicar ({ready.length})
+        </Button>
+        <Button
+          variant={mode === "review" ? "primary" : "secondary"}
+          aria-pressed={mode === "review"}
+          disabled={busy}
+          onClick={() => switchMode("review")}
+        >
+          Revisar pendientes ({pending.length})
+        </Button>
+      </div>
       {e ? (
         <div className="trainer-layout">
           <section className="panel exercise-card">
@@ -614,25 +647,32 @@ export function Trainer(ctx: Context) {
                 <p className="micro">
                   Sin EV, frecuencias ni equities de solver.
                 </p>
-                <Button
-                  onClick={() => {
-                    setIndex(index + 1);
-                    setChoice(undefined);
-                    setFeedback(false);
-                  }}
-                >
+                <Button onClick={nextExercise}>
                   Siguiente ejercicio <ArrowRight size={15} />
                 </Button>
               </div>
             ) : (
-              <Button
-                disabled={
-                  busy || choice === undefined || e.kind === "pendiente"
-                }
-                onClick={() => void answer()}
-              >
-                Guardar mi respuesta <ArrowRight size={15} />
-              </Button>
+              <div className="button-row">
+                {mode === "practice" && (
+                  <Button
+                    disabled={
+                      busy || choice === undefined || e.kind === "pendiente"
+                    }
+                    onClick={() => void answer()}
+                  >
+                    Guardar mi respuesta <ArrowRight size={15} />
+                  </Button>
+                )}
+                <Button
+                  variant="secondary"
+                  disabled={busy || exercises.length < 2}
+                  onClick={nextExercise}
+                >
+                  {mode === "review"
+                    ? "Siguiente pendiente"
+                    : "Saltar ejercicio"}
+                </Button>
+              </div>
             )}
           </section>
           <aside className="panel trainer-aside">
@@ -662,9 +702,10 @@ export function Trainer(ctx: Context) {
                 <Button
                   disabled={busy}
                   variant="secondary"
-                  onClick={() =>
-                    void act({ op: "exerciseReview", exerciseId: e.id })
-                  }
+                  onClick={async () => {
+                    if (await act({ op: "exerciseReview", exerciseId: e.id }))
+                      switchMode("practice");
+                  }}
                 >
                   He revisado este ejercicio
                 </Button>
@@ -679,10 +720,19 @@ export function Trainer(ctx: Context) {
           </aside>
         </div>
       ) : (
-        <Empty title="La práctica necesita una fuente revisada">
+        <Empty
+          title={
+            mode === "review"
+              ? "No quedan ejercicios pendientes de revisión"
+              : "No hay test listos para practicar"
+          }
+        >
           <p>
-            Publica una lección y prepara su práctica, o carga los ejemplos DEMO
-            desde Ajustes.
+            {mode === "review"
+              ? "Vuelve a Practicar para responder los test disponibles."
+              : pending.length
+                ? "Abre Revisar pendientes para contrastar sus fuentes y habilitar esos ejercicios."
+                : "Publica una lección y prepara su práctica para añadir ejercicios."}
           </p>
         </Empty>
       )}
