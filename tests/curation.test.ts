@@ -2,6 +2,22 @@ import { it, expect } from "vitest";
 import { emptyState, now } from "../src/lib/domain";
 import { addTranscript } from "../src/lib/pipeline";
 import { curateSource } from "../src/lib/curation";
+import { sourceNoteSchema } from "../src/lib/curation";
+import { reviewClasses, reviewedSessions } from "../src/content/review-classes";
+it("las clases de revisiones tienen intervalos reales acotados y preguntas conceptuales válidas", () => {
+  expect(reviewClasses).toHaveLength(12);
+  for (const lesson of reviewClasses) {
+    expect(sourceNoteSchema.safeParse(lesson).success).toBe(true);
+    const session = reviewedSessions.find((s) => s.id === lesson.videoId)!;
+    expect(lesson.to).toBeLessThanOrEqual(session.duration);
+    expect(lesson.to).toBeGreaterThan(lesson.from);
+    expect(lesson.teaching.example).toContain("hipotético");
+    for (const question of lesson.questions)
+      expect(
+        question.accepted.every((i) => i >= 0 && i < question.options.length),
+      ).toBe(true);
+  }
+});
 it("rechaza notas sin transcripción y conserva referencias exactas al curar", () => {
   const s = emptyState();
   s.videos.push({

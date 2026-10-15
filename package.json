@@ -22,7 +22,9 @@
     "format": "prettier --write src scripts tests *.ts *.mjs README.md docs",
     "curriculum": "node --env-file-if-exists=.env.local --import tsx scripts/curriculum.ts",
     "channel:catalogue": "node --env-file-if-exists=.env.local --import tsx scripts/catalogue.ts",
-    "channel:curate": "node --env-file-if-exists=.env.local --import tsx scripts/curate.ts"
+    "channel:curate": "node --env-file-if-exists=.env.local --import tsx scripts/curate.ts",
+    "academy:upgrade": "node --env-file-if-exists=.env.local --import tsx scripts/upgrade-academy.ts",
+    "security:check": "node scripts/check-secrets.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

@@ -10,7 +10,9 @@ test("fuente → worker → revisión → lección → práctica → persistenci
   await expect(page).toHaveURL(/login/);
   await page.getByRole("button", { name: "Abrir laboratorio local" }).click();
   await expect(
-    page.getByRole("heading", { name: "Una buena decisión cada vez." }),
+    page.getByRole("heading", {
+      name: "El siguiente nivel empieza por entender el porqué.",
+    }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Biblioteca", exact: true }).click();
   await page
@@ -54,6 +56,9 @@ test("fuente → worker → revisión → lección → práctica → persistenci
   expect(workerOutput).toContain("1 trabajo(s)");
   await page.reload();
   await page.getByRole("button", { name: "Mi academia", exact: true }).click();
+  await page
+    .getByText("Gestión de clases y borradores", { exact: true })
+    .click();
   await page.getByRole("button", { name: "Por revisar", exact: true }).click();
   await page
     .getByRole("button")
@@ -123,7 +128,9 @@ test("fuente → worker → revisión → lección → práctica → persistenci
   });
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Una buena decisión cada vez." }),
+    page.getByRole("heading", {
+      name: "El siguiente nivel empieza por entender el porqué.",
+    }),
   ).toBeVisible();
   await page.screenshot({
     path: "test-results/dashboard-desktop.png",

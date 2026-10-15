@@ -7,11 +7,14 @@ jobs:
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: npm
       - run: npm ci
+      - run: npm run security:check
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test

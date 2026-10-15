@@ -1,5 +1,8 @@
 "use client";
 import { useState } from "react";
+import { CourseCatalog } from "./course-catalog";
+import { LessonPractice } from "./lesson-practice";
+import { orderedLessons, readingMinutes } from "@/lib/learning";
 import {
   ArrowDownToLine,
   ArrowRight,
@@ -22,149 +25,13 @@ import { HandEditor } from "./hand-editor";
 import { Badge, Empty, PageHeading, SourceLinks, type Context } from "./lab";
 
 export function Academy(ctx: Context & { initialLessonId?: string }) {
-  const { s } = ctx;
-  const [selected, setSelected] = useState(ctx.initialLessonId ?? "");
-  const [filter, setFilter] = useState("published");
-  const [origin, setOrigin] = useState("all");
-  const [showDemo, setShowDemo] = useState(false);
-  const lesson = s.lessons.find((l) => l.id === selected);
-  if (lesson)
-    return (
-      <LessonView
-        {...ctx}
-        lesson={lesson}
-        back={() => setSelected("")}
-        key={lesson.id}
-      />
-    );
-  const list = s.lessons.filter(
-    (l) =>
-      (showDemo || !l.demo) &&
-      (filter === "all" || l.status === filter) &&
-      (origin === "all" ||
-        (origin === "editorial") ===
-          (s.videos.find((v) => v.id === l.videoId)?.sourceType ===
-            "editorial")),
-  );
-  const modules = [...new Set(list.map((l) => l.module))];
   return (
-    <>
-      <PageHeading
-        eyebrow="CONOCIMIENTO CON ESTRUCTURA"
-        title="Mi academia"
-        subtitle="Lecciones con condiciones, excepciones y referencias. Publica solo lo que hayas revisado."
-      />
-      <div className="study-route-intro">
-        <div>
-          <h2>Ruta de cash: NL2 → NL5 → NL10</h2>
-          <p>
-            Fundamentos intermedios, decisiones y revisión fuera de las
-            partidas.
-          </p>
-        </div>
-        <span>
-          {s.lessons.filter((l) => !l.demo && l.status === "published").length}{" "}
-          lecciones disponibles
-        </span>
-      </div>
-      <label className="checkbox show-demo-toggle">
-        <input
-          type="checkbox"
-          checked={showDemo}
-          onChange={(e) => setShowDemo(e.target.checked)}
-        />{" "}
-        Mostrar ejemplos DEMO
-      </label>
-      <label className="origin-filter">
-        Origen del material
-        <select value={origin} onChange={(e) => setOrigin(e.target.value)}>
-          <option value="all">Ruta y contenido del canal</option>
-          <option value="channel">Fuentes del canal</option>
-          <option value="editorial">Guía editorial propia</option>
-        </select>
-      </label>
-      <div className="tabs">
-        {[
-          ["all", "Todas"],
-          ["published", "Publicadas"],
-          ["draft", "Por revisar"],
-          ["rejected", "Rechazadas"],
-        ].map(([v, label]) => (
-          <button
-            className={filter === v ? "active" : ""}
-            key={v}
-            onClick={() => setFilter(v)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      {modules.map((m) => (
-        <section className="academy-module" key={m}>
-          <div className="section-heading">
-            <h2>{m}</h2>
-            <span className="muted">
-              {list.filter((l) => l.module === m).length} lecciones
-            </span>
-          </div>
-          <div className="academy-grid">
-            {list
-              .filter((l) => l.module === m)
-              .map((l) => (
-                <button
-                  className="panel academy-card"
-                  key={l.id}
-                  onClick={() => setSelected(l.id)}
-                >
-                  <div className="tag-row">
-                    <Badge green={l.status === "published"}>
-                      {l.status === "published"
-                        ? "Publicada"
-                        : l.status === "draft"
-                          ? "Por revisar"
-                          : "Rechazada"}
-                    </Badge>
-                    {l.demo && <Badge>DEMO</Badge>}
-                    {!l.demo && (
-                      <Badge>
-                        {s.videos.find((v) => v.id === l.videoId)
-                          ?.sourceType === "editorial"
-                          ? "Guía propia"
-                          : "Con fuente"}
-                      </Badge>
-                    )}
-                    {s.progress.find((p) => p.lessonId === l.id)?.favorite && (
-                      <Heart size={14} className="accent" />
-                    )}
-                  </div>
-                  <BookOpen size={24} className="accent" />
-                  <h3>{l.title}</h3>
-                  <p>{l.level}</p>
-                  <div className="video-footer">
-                    <small>
-                      {s.progress.find((p) => p.lessonId === l.id)?.completed
-                        ? "Lectura completada"
-                        : `${l.segmentIds.length} referencias originales`}
-                    </small>
-                    <ArrowRight size={17} />
-                  </div>
-                </button>
-              ))}
-          </div>
-        </section>
-      ))}
-      {!list.length && (
-        <Empty title="Tu temario empieza en las fuentes">
-          <p>
-            Importa y procesa una transcripción desde Biblioteca. Las lecciones
-            aparecerán primero como borradores.
-          </p>
-          <Button onClick={() => ctx.navigate("library")}>
-            Ir a biblioteca
-          </Button>
-        </Empty>
+    <CourseCatalog
+      {...ctx}
+      renderLesson={(lesson, back) => (
+        <LessonView {...ctx} lesson={lesson} back={back} key={lesson.id} />
       )}
-    </>
+    />
   );
 }
 function LessonView({
@@ -174,6 +41,10 @@ function LessonView({
 }: Context & { lesson: Lesson; back: () => void }) {
   const { s, act, busy, notify } = ctx;
   const progress = s.progress.find((p) => p.lessonId === l.id);
+  const source = s.videos.find((v) => v.id === l.videoId);
+  const sourceStart = s.segments.find((g) =>
+    l.segmentIds.includes(g.id),
+  )?.start;
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(l.title);
   const [body, setBody] = useState(l.body);
@@ -215,13 +86,16 @@ function LessonView({
           </Badge>
         </div>
       </PageHeading>
+      <section className="lesson-takeaway">
+        <span className="eyebrow">EN LA CLASE DE HOY APRENDEREMOS</span>
+        <p>{l.objectives[0]}</p>
+      </section>
       <div className="lesson-layout">
         <article className="panel lesson-article">
-          <div className="section-heading">
-            <div>
-              <span className="eyebrow">VERSIÓN {l.version}</span>
-              <p>{l.confidence}</p>
-            </div>
+          <div className="section-heading lesson-reading-meta">
+            <span className="eyebrow">
+              CLASE + PRÁCTICA · {readingMinutes(l)} MIN DE LECTURA
+            </span>
             <Button variant="secondary" onClick={() => setEditing(!editing)}>
               {editing ? "Cerrar editor" : "Editar y revisar"}
             </Button>
@@ -283,54 +157,88 @@ function LessonView({
             </div>
           ) : (
             <div className="lesson-prose">
-              {l.body
-                .split(/\n\n/)
-                .map((p, i) =>
-                  p.length < 100 && !/[.!?]/.test(p) ? (
-                    <h3 key={i}>{p}</h3>
-                  ) : (
-                    <p key={i}>{p}</p>
-                  ),
-                )}
+              {l.body.split(/\n\n/).map((p, i) =>
+                p.length < 100 && !/[.!?]/.test(p) ? (
+                  <h3 key={i} id={`class-part-${i}`}>
+                    {p}
+                  </h3>
+                ) : (
+                  <p key={i}>{p}</p>
+                ),
+              )}
             </div>
           )}
-          <h3>Origen e interpretación</h3>
-          {s.concepts
-            .filter((c) => l.conceptIds.includes(c.id))
-            .map((c) => (
-              <div className="concept-note" key={c.id}>
-                <Badge>
-                  {c.kind === "extracto"
-                    ? "Extracto / edición editorial"
-                    : "Interpretación de IA · revisable"}
-                </Badge>
-                <h4>{c.title}</h4>
-                <blockquote>{c.quote}</blockquote>
-                <p className="micro">
-                  {c.conditions.join(" ")} {c.warnings.join(" ")}
-                </p>
-              </div>
-            ))}
-          <h3>Referencias originales</h3>
-          <SourceLinks s={s} ids={l.segmentIds} />
-          {l.revisions?.length ? (
-            <details>
-              <summary>Historial de versiones ({l.revisions.length})</summary>
-              {l.revisions.map((v) => (
-                <details key={v.version}>
-                  <summary>
-                    v{v.version} · {new Date(v.at).toLocaleString("es-ES")}
-                  </summary>
-                  <h4>{v.title}</h4>
-                  <pre>{v.body}</pre>
-                </details>
+          <LessonPractice {...ctx} lesson={l} />
+          <details className="lesson-provenance">
+            <summary>Fuentes, contexto y revisión editorial</summary>
+            <p className="micro">
+              {s.videos.find((v) => v.id === l.videoId)?.sourceType ===
+              "editorial"
+                ? "Clase editorial propia. Los ejemplos son hipotéticos y no se atribuyen al canal."
+                : "Clase elaborada a partir de la fuente enlazada. Comprueba el vídeo para recuperar cartas, tamaños y contexto."}
+            </p>
+            <h3>Origen e interpretación</h3>
+            {s.concepts
+              .filter((c) => l.conceptIds.includes(c.id))
+              .map((c) => (
+                <div className="concept-note" key={c.id}>
+                  <Badge>
+                    {c.version === "source-notes-v1"
+                      ? "Clase editorial con fuente"
+                      : c.kind === "extracto"
+                        ? "Extracto / edición editorial"
+                        : "Interpretación de IA · revisable"}
+                  </Badge>
+                  <h4>{c.title}</h4>
+                  <blockquote>{c.quote}</blockquote>
+                  <p className="micro">
+                    {c.conditions.join(" ")} {c.warnings.join(" ")}
+                  </p>
+                </div>
               ))}
-            </details>
-          ) : null}
+            <h3>Referencias originales</h3>
+            <SourceLinks s={s} ids={l.segmentIds} />
+            {l.revisions?.length ? (
+              <details>
+                <summary>Historial de versiones ({l.revisions.length})</summary>
+                {l.revisions.map((v) => (
+                  <details key={v.version}>
+                    <summary>
+                      v{v.version} · {new Date(v.at).toLocaleString("es-ES")}
+                    </summary>
+                    <h4>{v.title}</h4>
+                    <pre>{v.body}</pre>
+                  </details>
+                ))}
+              </details>
+            ) : null}
+          </details>
         </article>
         <aside className="lesson-aside">
+          <section className="panel lesson-index">
+            <span className="eyebrow">DENTRO DE ESTA CLASE</span>
+            <nav aria-label="Contenido de la clase">
+              {l.body.split(/\n\n/).map((p, i) =>
+                p.length < 100 && !/[.!?]/.test(p) ? (
+                  <a key={i} href={`#class-part-${i}`}>
+                    {p}
+                  </a>
+                ) : null,
+              )}
+            </nav>
+            {source?.url && (
+              <a
+                className="button button-secondary"
+                href={`${source.url}${sourceStart !== undefined ? `&t=${Math.floor(sourceStart)}s` : ""}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Ver la decisión en el vídeo <ArrowRight size={14} />
+              </a>
+            )}
+          </section>
           <section className="panel">
-            <h3>Qué trabajarás</h3>
+            <h3>Tu plan de clase</h3>
             <ul>
               {l.objectives.map((o) => (
                 <li key={o}>{o}</li>
@@ -400,7 +308,10 @@ function LessonView({
             >
               <Sparkles size={15} /> Preparar práctica
             </Button>
-            <Button variant="ghost" onClick={() => ctx.navigate("trainer")}>
+            <Button
+              variant="ghost"
+              onClick={() => ctx.navigate("trainer", l.id)}
+            >
               Abrir entrenador <ArrowRight size={14} />
             </Button>
           </section>
@@ -439,7 +350,7 @@ function LessonView({
   );
 }
 
-export function SearchPage({ s, notify }: Context) {
+export function SearchPage({ s, notify, navigate }: Context) {
   const [q, setQ] = useState("");
   const [results, setResults] = useState<Segment[]>();
   const [busy, setBusy] = useState(false);
@@ -483,6 +394,40 @@ export function SearchPage({ s, notify }: Context) {
           {busy ? "Buscando…" : "Buscar"} <ArrowRight size={15} />
         </Button>
       </form>
+      {q.trim().length >= 2 && (
+        <section className="lesson-search-results">
+          <div className="section-heading">
+            <h2>Clases sobre este concepto</h2>
+          </div>
+          {orderedLessons(s)
+            .filter((l) =>
+              q
+                .toLocaleLowerCase("es")
+                .split(/\s+/)
+                .filter(Boolean)
+                .every((term) =>
+                  (l.title + " " + l.objectives.join(" ") + " " + l.body)
+                    .toLocaleLowerCase("es")
+                    .includes(term),
+                ),
+            )
+            .slice(0, 6)
+            .map((l) => (
+              <button
+                className="curriculum-row"
+                key={l.id}
+                onClick={() => navigate("academy", l.id)}
+              >
+                <BookOpen size={19} />
+                <span>
+                  <h3>{l.title}</h3>
+                  <small>{l.objectives[0]}</small>
+                </span>
+                <ArrowRight size={16} />
+              </button>
+            ))}
+        </section>
+      )}
       <div className="suggestions">
         {["second barrel turn", "BTN BB boards bajos", "bluffcatch river"].map(
           (v) => (
@@ -515,9 +460,11 @@ export function SearchPage({ s, notify }: Context) {
               {cs.slice(0, 3).map((c) => (
                 <div className="search-interpretation" key={c.id}>
                   <Badge>
-                    {c.kind === "interpretación IA"
-                      ? "Interpretación de IA"
-                      : "Lectura editorial / extracto"}
+                    {c.version === "source-notes-v1"
+                      ? "Clase editorial con fuente"
+                      : c.kind === "interpretación IA"
+                        ? "Interpretación de IA"
+                        : "Lectura editorial / extracto"}
                   </Badge>
                   <h3>{c.title}</h3>
                   <p>{c.explanation.slice(0, 900)}</p>
@@ -548,8 +495,9 @@ export function SearchPage({ s, notify }: Context) {
   );
 }
 
-export function Trainer(ctx: Context) {
+export function Trainer(ctx: Context & { initialLessonId?: string }) {
   const { s, act, busy } = ctx;
+  const [lessonFilter, setLessonFilter] = useState(ctx.initialLessonId ?? "");
   const [mode, setMode] = useState<"practice" | "review">("practice");
   const [index, setIndex] = useState(0);
   const [choice, setChoice] = useState<number>();
@@ -557,6 +505,7 @@ export function Trainer(ctx: Context) {
   const published = s.exercises.filter(
     (e) =>
       !e.demo &&
+      (!lessonFilter || e.lessonId === lessonFilter) &&
       s.lessons.some((l) => l.id === e.lessonId && l.status === "published"),
   );
   const ready = published.filter((exercise) => exercise.kind !== "pendiente");
@@ -586,6 +535,25 @@ export function Trainer(ctx: Context) {
         title="Entrenador de decisiones"
         subtitle="Práctica fuera de sesión. Respuestas condicionadas a la fuente y a los supuestos."
       />
+      <label className="trainer-filter">
+        Practicar un concepto
+        <select
+          value={lessonFilter}
+          onChange={(event) => {
+            setLessonFilter(event.target.value);
+            setIndex(0);
+            setChoice(undefined);
+            setFeedback(false);
+          }}
+        >
+          <option value="">Todas las clases</option>
+          {orderedLessons(s).map((l) => (
+            <option key={l.id} value={l.id}>
+              {l.title}
+            </option>
+          ))}
+        </select>
+      </label>
       <div className="button-row" aria-label="Modo del entrenador">
         <Button
           variant={mode === "practice" ? "primary" : "secondary"}
@@ -685,7 +653,10 @@ export function Trainer(ctx: Context) {
             </ul>
             <h3>Material relacionado</h3>
             <p>{s.lessons.find((l) => l.id === e.lessonId)?.title}</p>
-            <Button variant="ghost" onClick={() => ctx.navigate("academy")}>
+            <Button
+              variant="ghost"
+              onClick={() => ctx.navigate("academy", e.lessonId)}
+            >
               Revisar lección <ArrowRight size={14} />
             </Button>
             {(feedback || e.kind === "pendiente") && (

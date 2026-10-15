@@ -4,9 +4,9 @@ Academia privada de cash No-Limit Hold’em, en español, orientada a recuperar 
 
 ## Estado de la academia
 
-Portada simplificada: una siguiente lección, repaso y práctica. Los componentes Card adaptan código MIT de shadcn/ui; atribución en [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Academia rediseñada: una siguiente clase, cuatro rutas por conceptos, práctica dentro de las clases y un laboratorio de revisiones de manos. Diseño tinta / verde lima, adaptable a móvil. Inspiración y decisiones en [docs/design.md](docs/design.md). Se conserva la atribución de los componentes adaptados de shadcn/ui en [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-Ruta editorial propia: **18 lecciones, 36 ejercicios y 18 fichas**, identificadas como material original independiente del canal. El catálogo incluido contiene **57 referencias públicas observadas**, no el histórico entero. En el workspace, al combinarlo con RSS, hay **65 vídeos reales, 8 fuentes transcritas, 6 síntesis con referencias y 8 ejercicios derivados pendientes de revisión**. Las transcripciones y datos privados no se publican en Git.
+Ruta editorial propia: **24 clases y 48 ejercicios**, identificados como material original independiente del canal. Las 18 clases anteriores incorporan ejemplos razonados y se añaden seis clases sobre estrategia, bluffcatch NL2, valor, faroles, rangos y cómo estudiar sesiones largas. El catálogo incluido contiene **57 referencias públicas observadas**, no el histórico entero. La base local actual tiene **46 clases publicadas, 22 de ellas vinculadas a fuentes, 72 ejercicios y 46 fichas**. Se han obtenido cuatro transcripciones adicionales de revisiones y se importan los intervalos trabajados. Las transcripciones y datos privados no se publican en Git.
 
 No se afirma haber importado todo el canal ni garantizar ganar o batir NL10. Los subtítulos automáticos no permiten reconstruir todos los boards, sizings o estadísticas. Cada síntesis distingue interpretación, fuente y datos ausentes.
 
@@ -16,9 +16,11 @@ Para cargar el material incluido en una base nueva:
 npm run curriculum
 npm run channel:catalogue
 npm run youtube:sync
+# Actualizar la academia y desarrollar las clases cuyas fuentes están disponibles:
+npm run academy:upgrade
 ```
 
-Sin key, `youtube:sync` consulta RSS oficial reciente; con `YOUTUBE_API_KEY`, recorre el histórico paginado. Los vídeos sin transcripción no producen conocimiento ficticio. `channel:curate` solo crea las seis síntesis si sus transcripciones reales ya existen en la base; se niega a inventar procedencia.
+Sin key, `youtube:sync` consulta RSS oficial reciente; con `YOUTUBE_API_KEY`, recorre el histórico paginado. Los vídeos sin transcripción no producen conocimiento ficticio. `channel:curate` solo desarrolla las clases con sus transcripciones reales disponibles. `academy:upgrade` guarda antes una copia SQLite local, conserva ediciones personales y mantiene notas, respuestas y progreso. Una base nueva sin las transcripciones privadas tendrá las 24 clases editoriales; las otras 22 necesitan sus fuentes.
 
 ## Inicio local
 
@@ -123,6 +125,7 @@ El repositorio de destino es `manusilla24-debug/academia`. Publicar código no d
 ## Pruebas
 
 ```powershell
+npm run security:check
 npm run typecheck
 npm run lint
 npm test
@@ -130,6 +133,8 @@ npm run build
 npm exec playwright install chromium
 npm run test:e2e
 ```
+
+`security:check` revisa archivos publicables y el historial de Git sin imprimir valores de credenciales. Rechaza archivos privados, claves reconocibles y contraseñas en URLs de conexión. También contrasta secretos de la configuración local cuando están disponibles. CI ejecuta esta comprobación con el historial completo. Este control no revoca contraseñas en Supabase ni elimina configuraciones de despliegues antiguos.
 
 Vitest cubre parsers, segmentación larga, clasificación, cartas/stacks/calles, ejercicios, SM-2, citas falsas, checkpoints/idempotencia/fallos, sesiones, CSRF, endpoints y proveedores con respuestas controladas. PGlite ejecuta la migración y verifica FKs, índice full-text y RLS de propietario; no equivale a una conexión real con Supabase.
 

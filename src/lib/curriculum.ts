@@ -1,22 +1,58 @@
 import { cashCourse } from "../content/cash-course";
+import { academyCourse, workedExamples } from "../content/academy-course";
 import { now, exerciseSchema, type State } from "./domain";
 import { addTranscript } from "./pipeline";
 export function installCurriculum(s: State) {
   const sourceId = "editorial_cash_v1";
-  if (s.videos.some((v) => v.id === sourceId)) return false;
-  s.videos.push({
-    id: sourceId,
-    title: "Guía editorial propia · Cash 6-max NL2 → NL10",
-    sourceType: "editorial",
-    demo: false,
-    relevant: true,
-    tags: ["NL2", "NL5", "NL10"],
-    status: "published",
-    createdAt: now(),
-  });
-  for (const [i, u] of cashCourse.entries()) {
-    const id = `core_${String(i + 1).padStart(2, "0")}_${u.slug}`;
-    const body = `Material editorial propio. No procede del canal ni es una solución de solver.\n\n${u.theory}\n\nProceso de decisión\n\n${u.method.map((v, n) => `${n + 1}. ${v}`).join("\n\n")}\n\nCondiciones y límites\n\n${u.limits}\n\nAplicación fuera de sesión\n\n${u.practice}\n\nAutoevaluación\n\n${u.questions.map((q) => q.prompt).join("\n\n")}`;
+  let changed = false;
+  if (!s.videos.some((v) => v.id === sourceId))
+    s.videos.push({
+      id: sourceId,
+      title: "Guía editorial propia · Cash 6-max NL2 → NL10",
+      sourceType: "editorial",
+      demo: false,
+      relevant: true,
+      tags: ["NL2", "NL5", "NL10"],
+      status: "published",
+      createdAt: now(),
+    });
+  for (const [i, u] of [...cashCourse, ...academyCourse].entries()) {
+    const id =
+      i < cashCourse.length
+        ? `core_${String(i + 1).padStart(2, "0")}_${u.slug}`
+        : `academy_${u.slug}`;
+    const oldBody = `Material editorial propio. No procede del canal ni es una solución de solver.\n\n${u.theory}\n\nProceso de decisión\n\n${u.method.map((v, n) => `${n + 1}. ${v}`).join("\n\n")}\n\nCondiciones y límites\n\n${u.limits}\n\nAplicación fuera de sesión\n\n${u.practice}\n\nAutoevaluación\n\n${u.questions.map((q) => q.prompt).join("\n\n")}`;
+    const body = `En esta clase aprenderemos\n\n${u.objective}\n\nLa idea que necesitas entender\n\n${u.theory}${workedExamples[u.slug] ? `\n\nUn ejemplo razonado\n\nEjemplo hipotético de estudio.\n\n${workedExamples[u.slug]}` : ""}\n\nCómo tomar la decisión\n\n${u.method.map((v, n) => `${n + 1}. ${v}`).join("\n\n")}\n\nEl error que queremos evitar\n\n${u.limits}\n\nTu tarea de hoy\n\n${u.practice}\n\nComprueba si lo has entendido\n\n${u.questions.map((q) => q.prompt).join("\n\n")}`;
+    const existing = s.lessons.find((l) => l.id === id);
+    if (existing) {
+      if (
+        i >= cashCourse.length &&
+        existing.version === 2 &&
+        existing.body === body &&
+        !existing.revisions?.length &&
+        (existing.module !== u.area ||
+          existing.level !== "Fundamentos · NL2 / NL5")
+      ) {
+        existing.module = u.area;
+        existing.level = "Fundamentos · NL2 / NL5";
+        changed = true;
+      }
+      // Only replace the exact shipped v1 text. Personal edits and progress survive.
+      if (
+        existing.version === 1 &&
+        existing.body === oldBody &&
+        !existing.revisions?.length
+      ) {
+        existing.revisions = [
+          { version: 1, title: existing.title, body: existing.body, at: now() },
+        ];
+        existing.body = body;
+        existing.version = 2;
+        changed = true;
+      }
+      continue;
+    }
+    changed = true;
     const t = addTranscript(s, sourceId, body, `${id}.txt`);
     const segments = s.segments.filter((g) => g.transcriptId === t.id);
     const cId = `concept_${id}`;
@@ -25,7 +61,7 @@ export function installCurriculum(s: State) {
       videoId: sourceId,
       title: u.title,
       explanation: body,
-      quote: u.theory,
+      quote: u.theory.split(/\n\n/)[0],
       segmentIds: segments.map((g) => g.id),
       kind: "extracto",
       conditions: [u.limits],
@@ -41,21 +77,27 @@ export function installCurriculum(s: State) {
       id,
       videoId: sourceId,
       title: u.title,
-      module: `${String(i + 1).padStart(2, "0")} · ${u.area}`,
+      module:
+        i >= cashCourse.length
+          ? u.area
+          : `${String(i + 1).padStart(2, "0")} · ${u.area}`,
       level:
-        i < 12
-          ? "Intermedio · NL2 / NL5"
-          : "Intermedio · Consolidar NL5 / preparar NL10",
+        i >= cashCourse.length
+          ? "Fundamentos · NL2 / NL5"
+          : i < 12
+            ? "Intermedio · NL2 / NL5"
+            : "Intermedio · Consolidar NL5 / preparar NL10",
       body,
       objectives: [u.objective],
-      prerequisites: i
-        ? [cashCourse[i - 1].title]
-        : ["Conocimiento previo de reglas y posiciones de cash Hold’em."],
+      prerequisites:
+        i && i < cashCourse.length
+          ? [cashCourse[i - 1].title]
+          : ["Conocimiento previo de reglas y posiciones de cash Hold’em."],
       conceptIds: [cId],
       segmentIds: segments.map((g) => g.id),
       status: "published",
       confidence: "Guía editorial propia · heurísticas revisables",
-      version: 1,
+      version: 2,
       demo: false,
     });
     for (const [n, q] of u.questions.entries()) {
@@ -107,5 +149,5 @@ export function installCurriculum(s: State) {
     });
   }
   s.videos.find((v) => v.id === sourceId)!.status = "published";
-  return true;
+  return changed;
 }

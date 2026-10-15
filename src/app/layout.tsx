@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "./quiet-theme.css";
+import "./academy-theme.css";
 export const metadata: Metadata = {
   title: "Poker Study Lab",
   description:

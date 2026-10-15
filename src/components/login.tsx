@@ -36,15 +36,15 @@ export function Login({ demo, remote }: { demo: boolean; remote: boolean }) {
           Poker Study Lab
         </div>
         <div>
-          <span className="eyebrow">TU LABORATORIO DE CASH HOLD’EM</span>
+          <span className="eyebrow">TU ACADEMIA DE CASH HOLD’EM</span>
           <h1>
-            Menos horas de vídeo.
+            Entiende la mano.
             <br />
-            <em>Más criterio en la mesa.</em>
+            <em>Construye tu criterio.</em>
           </h1>
           <p>
-            Convierte tus fuentes en conocimiento que puedes contrastar,
-            practicar y recordar.
+            Aprende la estrategia, trabaja los conceptos y descubre el porqué de
+            cada decisión en las revisiones de manos.
           </p>
         </div>
         <small>

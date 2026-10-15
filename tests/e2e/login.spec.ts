@@ -8,7 +8,9 @@ test("login local real sin campo email y cierre de sesión", async ({
     .fill("e2e-local-password");
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "Una buena decisión cada vez." }),
+    page.getByRole("heading", {
+      name: "El siguiente nivel empieza por entender el porqué.",
+    }),
   ).toBeVisible({ timeout: 30000 });
   await page
     .getByRole("button", { name: "Cerrar sesión", exact: true })

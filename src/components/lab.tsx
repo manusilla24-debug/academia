@@ -26,6 +26,7 @@ import {
 import type { State } from "@/lib/domain";
 import { Button } from "./ui/button";
 import { Dashboard } from "./dashboard";
+import { Workshops } from "./workshops";
 import Image from "next/image";
 import {
   Academy,
@@ -45,7 +46,8 @@ type Nav =
   | "leaks"
   | "hands"
   | "review"
-  | "settings";
+  | "settings"
+  | "workshops";
 type LabState = State & {
   capabilities: {
     youtube: boolean;
@@ -75,6 +77,7 @@ export type Context = {
 const navigation = [
   { id: "dashboard", label: "Mi estudio", icon: LayoutDashboard },
   { id: "academy", label: "Mi academia", icon: GraduationCap },
+  { id: "workshops", label: "Revisiones de manos", icon: Layers },
   { id: "library", label: "Biblioteca", icon: Library },
   { id: "search", label: "Buscar conocimiento", icon: Search },
   { id: "trainer", label: "Entrenador", icon: Target },
@@ -292,6 +295,9 @@ export function Lab() {
   ).length;
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main-content">
+        Saltar al contenido
+      </a>
       <aside className={`sidebar ${mobile ? "mobile-open" : ""}`}>
         <div className="brand">
           <span className="brand-symbol">
@@ -299,7 +305,7 @@ export function Lab() {
           </span>
           <span>
             {s.settings.name}
-            <small>LABORATORIO PERSONAL</small>
+            <small>ACADEMIA DE CASH</small>
           </span>
           <button
             className="icon-button mobile-close"
@@ -313,10 +319,13 @@ export function Lab() {
           <span className="online-dot" /> Espacio privado{" "}
           <ShieldCheck size={13} />
         </div>
+        <span className="nav-group-label">APRENDER & ENTRENAR</span>
         <nav aria-label="Navegación principal">
           {navigation.map((n) => (
             <button
               key={n.id}
+              aria-label={n.label}
+              aria-current={nav === n.id ? "page" : undefined}
               className={`nav-item ${nav === n.id ? "active" : ""}`}
               onClick={() => navigate(n.id)}
             >
@@ -327,6 +336,15 @@ export function Lab() {
           ))}
         </nav>
         <div className="sidebar-bottom">
+          <div className="sidebar-study-note">
+            <span className="eyebrow">UNA MANO CADA VEZ</span>
+            <strong>El porqué importa.</strong>
+            <p>
+              Estudia con calma.
+              <br />
+              Decide con criterio.
+            </p>
+          </div>
           <div className="profile">
             <span className="avatar">YO</span>
             <div>
@@ -396,11 +414,21 @@ export function Lab() {
           ) : nav === "library" ? (
             <LibraryPage {...ctx} />
           ) : nav === "academy" ? (
-            <Academy {...ctx} initialLessonId={lessonToOpen} />
+            <Academy
+              {...ctx}
+              initialLessonId={lessonToOpen}
+              key={lessonToOpen}
+            />
           ) : nav === "search" ? (
             <SearchPage {...ctx} />
+          ) : nav === "workshops" ? (
+            <Workshops {...ctx} />
           ) : nav === "trainer" ? (
-            <Trainer {...ctx} />
+            <Trainer
+              {...ctx}
+              initialLessonId={lessonToOpen}
+              key={lessonToOpen}
+            />
           ) : nav === "review" ? (
             <ReviewPage {...ctx} />
           ) : nav === "hands" ? (

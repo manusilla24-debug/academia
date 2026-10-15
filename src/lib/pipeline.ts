@@ -189,18 +189,23 @@ export async function runOneJob(
             s.lessons.push({
               id,
               videoId: job.videoId,
-              title: s.videos.find((v) => v.id === job.videoId)!.title,
+              title:
+                job.provider === "ai"
+                  ? cs[0].title
+                  : s.videos.find((v) => v.id === job.videoId)!.title,
               module: cs[0].topic,
               level: "Intermedio · NL2 → NL5",
-              body: cs
-                .map(
-                  (c) =>
-                    `${c.title}\n\n${c.explanation}\n\nCondiciones: ${c.conditions.join(" ")}\nAdvertencias: ${c.warnings.join(" ")}`,
-                )
-                .join("\n\n———\n\n"),
+              body:
+                `${job.provider === "ai" ? "En esta clase aprenderemos" : "Preparación de clase · fuente para trabajar"}\n\n${cs.map((c) => c.title).join(" · ")}\n\n` +
+                cs
+                  .map(
+                    (c) =>
+                      `${c.title}\n\n${c.explanation}\n\nCuándo aplicar esta idea\n\n${c.conditions.join(" ")}\n\n${c.warnings.join(" ")}`,
+                  )
+                  .join("\n\n———\n\n"),
               objectives: [
-                "Identificar las condiciones de cada recomendación.",
-                "Contrastar los conceptos con sus fragmentos originales.",
+                ...cs.map((c) => c.title),
+                "Explicar una decisión propia y una alternativa bajo estas condiciones.",
               ],
               prerequisites: ["Cash Hold’em y posiciones conocidas."],
               conceptIds: cs.map((c) => c.id),
